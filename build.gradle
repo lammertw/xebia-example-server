@@ -38,26 +38,6 @@ repositories {
     }
 }
 
-uploadArchives {
-    repositories {
-        // the maven plugin features this deployer
-        mavenDeployer {
-            // we deploy to the release repository in this case
-            repository(url: nsReleaseRepo) {
-                authentication(userName: nsRepoUsername, password: nsRepoPassword)
-            }
-            snapshotRepository(url: nsSnapshotRepo) {
-                // values as variable names declared in ~/.gradle/gradle.properties
-                authentication(userName: nsRepoUsername, password: nsRepoPassword)
-            }
-            pom.project {
-                name 'places'
-                version scmVersion.version
-            }
-        }
-    }
-}
-
 task wrapper(type: Wrapper) {
     gradleVersion = '2.2'
 }
