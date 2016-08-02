@@ -1,4 +1,4 @@
-package nl.ns.api.com.xebia.example.health;
+package com.xebia.example.health;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

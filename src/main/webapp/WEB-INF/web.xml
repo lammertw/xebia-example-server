@@ -4,11 +4,11 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
     <servlet>
-        <servlet-name>nl.ns.api.com.xebia.example.Application</servlet-name>
+        <servlet-name>com.xebia.example.Application</servlet-name>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>nl.ns.api.com.xebia.example.Application</servlet-name>
+        <servlet-name>com.xebia.example.Application</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 

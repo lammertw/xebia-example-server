@@ -1,4 +1,4 @@
-package nl.ns.api.com.xebia.example;
+package com.xebia.example;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
