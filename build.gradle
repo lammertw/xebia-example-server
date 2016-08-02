@@ -51,7 +51,6 @@ dependencies {
     compile 'org.glassfish.jersey.media:jersey-media-multipart:2.13'
     compile 'io.swagger:swagger-jersey2-jaxrs:1.5.9'
 
-    compile 'nl.ns.commonservice:CommonService:1.0.36'
     compile "com.netflix.hystrix:hystrix-core:$hystrixVersion"
     compile "com.netflix.hystrix:hystrix-metrics-event-stream:$hystrixVersion"
     compile "joda-time:joda-time:2.5"
