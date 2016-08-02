@@ -1,0 +1,61 @@
+[
+  {
+    "OptionName": "EnvironmentType",
+    "Namespace" : "aws:elasticbeanstalk:environment",
+    "Value"     : "SingleInstance"
+  },
+  {
+    "OptionName": "EnvironmentVariables",
+    "Namespace" : "aws:cloudformation:template:parameter",
+    "Value"     : "archaius.deployment.environment=test,JDBC_CONNECTION_STRING="
+  },
+  {
+    "OptionName": "Xmx",
+    "Namespace" : "aws:elasticbeanstalk:container:tomcat:jvmoptions",
+    "Value"     : "768m"
+  },
+  {
+    "OptionName": "Application Healthcheck URL",
+    "Namespace" : "aws:elasticbeanstalk:application",
+    "Value"     : "/api/v1/health"
+  },
+  {
+    "OptionName": "InstanceType",
+    "Namespace" : "aws:autoscaling:launchconfiguration",
+    "Value"     : "t2.micro"
+  },
+  {
+    "OptionName"  : "EC2KeyName",
+    "ResourceName": "AWSEBAutoScalingLaunchConfiguration",
+    "Namespace"   : "aws:autoscaling:launchconfiguration",
+    "Value"       : "JoelHaasnoot"
+  },
+  {
+    "OptionName"  : "IamInstanceProfile",
+    "ResourceName": "AWSEBAutoScalingLaunchConfiguration",
+    "Namespace"   : "aws:autoscaling:launchconfiguration",
+    "Value"       : "aws-elasticbeanstalk-ec2-role"
+  },
+  {
+    "OptionName": "SystemType",
+    "Namespace" : "aws:elasticbeanstalk:healthreporting:system",
+    "Value"     : "enhanced"
+  },
+  {
+    "OptionName"  : "SecurityGroups",
+    "ResourceName": "AWSEBAutoScalingLaunchConfiguration",
+    "Namespace"   : "aws:autoscaling:launchconfiguration",
+    "Value"       : "default_elb_security_group"
+  },
+  {
+    "OptionName"  : "SSHSourceRestriction",
+    "ResourceName": "AWSEBAutoScalingLaunchConfiguration",
+    "Namespace"   : "aws:autoscaling:launchconfiguration",
+    "Value"       : "tcp, 22, 22, bastion_host"
+  },
+  {
+    "OptionName": "ServiceRole",
+    "Namespace" : "aws:elasticbeanstalk:environment",
+    "Value"     : "aws-elasticbeanstalk-service-role"
+  }
+]

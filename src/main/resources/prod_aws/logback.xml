@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+    <shutdownHook/>
+
+    <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <charset>UTF-8</charset>
+            <Pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <!--<destination>127.0.0.1:4560</destination>-->
+        <destination>5.79.86.27:4560</destination>
+
+        <!-- encoder is required -->
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"api_name":"com.xebia.example"}</customFields>
+            <includeMdcKeyName>request_id</includeMdcKeyName>
+            <includeMdcKeyName>caller</includeMdcKeyName>
+            <includeMdcKeyName>user_agent</includeMdcKeyName>
+            <includeMdcKeyName>resource</includeMdcKeyName>
+        </encoder>
+
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+    </appender>
+
+    <logger name="nl.ns" level="INFO" additivity="false">
+        <appender-ref ref="stash" />
+    </logger>
+
+   <logger name="nl.ns" level="DEBUG" additivity="false">
+        <appender-ref ref="consoleAppender" />
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="stash" />
+    </root>
+</configuration>

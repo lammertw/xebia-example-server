@@ -1,0 +1,183 @@
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'pl.allegro.tech.build.axion-release' version '1.3.2'
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+configurations.all {
+    resolutionStrategy {
+        cacheChangingModulesFor 0, 'seconds'
+    }
+}
+
+scmVersion {
+}
+
+group = 'nl.ns.api.skeleton'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://repo.typesafe.com/typesafe/releases/"
+    }
+}
+
+uploadArchives {
+    repositories {
+        // the maven plugin features this deployer
+        mavenDeployer {
+            // we deploy to the release repository in this case
+            repository(url: nsReleaseRepo) {
+                authentication(userName: nsRepoUsername, password: nsRepoPassword)
+            }
+            snapshotRepository(url: nsSnapshotRepo) {
+                // values as variable names declared in ~/.gradle/gradle.properties
+                authentication(userName: nsRepoUsername, password: nsRepoPassword)
+            }
+            pom.project {
+                name 'places'
+                version scmVersion.version
+            }
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2'
+}
+
+def hystrixVersion = "1.4.21"
+def slf4jVersion = "1.7.5"
+def awsSdkVersion = "1.10.60"
+
+dependencies {
+    compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.13'
+    compile 'org.glassfish.jersey.media:jersey-media-multipart:2.13'
+    compile 'io.swagger:swagger-jersey2-jaxrs:1.5.9'
+
+    compile 'nl.ns.commonservice:CommonService:1.0.36'
+    compile "com.netflix.hystrix:hystrix-core:$hystrixVersion"
+    compile "com.netflix.hystrix:hystrix-metrics-event-stream:$hystrixVersion"
+    compile "joda-time:joda-time:2.5"
+    compile "com.google.code.gson:gson:2.5"
+    compile "com.google.guava:guava:18.0"
+
+//    Logging
+    compile "org.slf4j:jcl-over-slf4j:$slf4jVersion"
+    compile "org.slf4j:log4j-over-slf4j:$slf4jVersion"
+    compile "org.slf4j:jul-to-slf4j:$slf4jVersion"
+    compile "net.logstash.logback:logstash-logback-encoder:4.5.1"
+    compile "ch.qos.logback:logback-classic:1.1.3"
+
+    compile "com.amazonaws:aws-java-sdk:$awsSdkVersion"
+    compile "net.spy.memcached:amazon-elasticache-clusterclient:1.0"
+
+    providedCompile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+
+    testCompile "junit:junit-dep:4.10"
+    testCompile "org.codehaus.groovy:groovy-all:2.4.0"
+    testCompile group: 'com.squareup.okhttp', name: 'mockwebserver', version: '2.7.5'
+    testCompile "org.mockito:mockito-core:1.+"
+    testCompile "com.google.jimfs:jimfs:1.0"
+}
+
+/**
+ * Release:
+ * git tag release-1.1.1 (voorbeeld versie) let op dat dit altijd drie cijfers is.
+ * ./gradlew clean build war release uploadArchives
+ */
+
+def replaceTokenInFile(File file, String token, String newValue) {
+    final java.nio.file.Path path = Paths.get(file.getAbsolutePath());
+    final Charset charset = StandardCharsets.UTF_8;
+    String content = new String(java.nio.file.Files.readAllBytes(path), charset);
+    content = content.replaceAll(token, newValue);
+    java.nio.file.Files.write(path, content.getBytes(charset));
+}
+
+def listAllFiles(File file, String token, String newValue) {
+    File[] children = file.listFiles();
+    for (File child : children) {
+        if (child.isDirectory()) {
+            listAllFiles(child, token, newValue);
+        } else {
+            if (
+            (!child.getAbsolutePath().contains(".idea") &&
+                    !child.getAbsolutePath().contains(".gradle") &&
+                    !child.getAbsolutePath().contains(".git") &&
+                    !child.getAbsolutePath().contains("/gradle") &&
+                    !child.getAbsolutePath().contains("/out") &&
+                    !child.getAbsolutePath().contains("/build"))) {
+                replaceTokenInFile(child, token, newValue)
+            }
+        }
+    }
+}
+
+def doCreateApi(String apiName, String packageName, File apiProjectRootLocation, File newProjectLocation) {
+    File newProjectFolder = new File(newProjectLocation, apiName)
+    newProjectFolder.mkdir()
+
+    println "Copy skeleton to $newProjectLocation"
+    copy {
+        from apiProjectRootLocation
+        into newProjectFolder
+        exclude ".idea"
+        exclude ".git"
+        exclude "out"
+        exclude "build"
+        exclude "settings.gradle"
+        exclude "README.md"
+    }
+
+    println "Copy .gitignore"
+    Files.copy(Paths.get(apiProjectRootLocation.getAbsolutePath(), ".gitignore"), Paths.get(newProjectFolder.getAbsolutePath(), ".gitignore"), StandardCopyOption.REPLACE_EXISTING);
+
+    println "Replace (skeleton) with $packageName in all files"
+    listAllFiles(newProjectFolder, "skeleton", packageName)
+    println "Replace (SkeletonApi) with $apiName in all files"
+    listAllFiles(newProjectFolder, "SkeletonApi", apiName)
+    println "Replace (skeleton_acc) with $packageName" + "_acc in prod_aws/logback.xml"
+    listAllFiles(newProjectFolder, "skeleton_acc", packageName + "_acc")
+
+    println "Rename skeleton package folder to $packageName"
+    File currentDirectory = new File(new File("../").getAbsolutePath())
+    currentDirectory = new File(currentDirectory.parent)
+    File javaSkeleton = new File(currentDirectory.getParent() + "/" + apiName + "/src/main/java/nl/ns/api", "skeleton");
+    javaSkeleton.renameTo(new File(currentDirectory.getParent() + "/" + apiName + "/src/main/java/nl/ns/api", packageName));
+
+    println "Done. Import the project in Intellij using New Project from Existing Source and choose gradle."
+}
+
+task createApi {
+    if (!project.hasProperty("apiName") || apiName.length() == 0
+            || !project.hasProperty("packageName") || packageName.length() == 0) {
+        println "Please use the following syntax to create a new API: ./gradlew createApi -PapiName=TestAPI -PpackageName=test"
+    } else {
+        File currentDirectory = new File(new File(".").getAbsolutePath());
+        final File apiTemplateProjectLocation = currentDirectory.getParentFile();
+        final File newProjectLocation = apiTemplateProjectLocation.getParentFile()
+        println "About to create api with name $apiName and package nl.ns.api.$packageName in folder $newProjectLocation"
+        def answer = System.console().readLine("Is this correct (yes/no)? ")
+        if (answer == "yes") {
+            doCreateApi(apiName, packageName, apiTemplateProjectLocation, newProjectLocation)
+        }
+    }
+}
+

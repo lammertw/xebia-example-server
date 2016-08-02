@@ -1,0 +1,79 @@
+[
+  {
+    "OptionName": "EnvironmentType",
+    "Namespace" : "aws:elasticbeanstalk:environment",
+    "Value"     : "LoadBalanced"
+  },
+  {
+    "OptionName"  : "CrossZone",
+    "ResourceName": "AWSEBLoadBalancer",
+    "Namespace"   : "aws:elb:loadbalancer",
+    "Value"       : "true"
+  },
+  {
+    "OptionName"  : "MaxSize",
+    "ResourceName": "AWSEBAutoScalingGroup",
+    "Namespace"   : "aws:autoscaling:asg",
+    "Value"       : "1"
+  },
+  {
+    "OptionName"  : "MinSize",
+    "ResourceName": "AWSEBAutoScalingGroup",
+    "Namespace"   : "aws:autoscaling:asg",
+    "Value"       : "1"
+  },
+  {
+    "OptionName": "Xmx",
+    "Namespace" : "aws:elasticbeanstalk:container:tomcat:jvmoptions",
+    "Value"     : "768m"
+  },
+  {
+    "OptionName": "JVM Options",
+    "Namespace": "aws:elasticbeanstalk:container:tomcat:jvmoptions",
+    "Value": "-Dcom.amazonaws.sdk.enableDefaultMetrics=cloudwatchRegion=eu-west-1,metricNameSpace=com.xebia.example"
+  },
+  {
+    "OptionName": "Application Healthcheck URL",
+    "Namespace" : "aws:elasticbeanstalk:application",
+    "Value"     : "/api/v1/health"
+  },
+  {
+    "OptionName": "InstanceType",
+    "Namespace" : "aws:autoscaling:launchconfiguration",
+    "Value"     : "t2.micro"
+  },
+  {
+    "OptionName"  : "EC2KeyName",
+    "ResourceName": "AWSEBAutoScalingLaunchConfiguration",
+    "Namespace"   : "aws:autoscaling:launchconfiguration",
+    "Value"       : "JoelHaasnoot"
+  },
+  {
+    "OptionName": "SystemType",
+    "Namespace" : "aws:elasticbeanstalk:healthreporting:system",
+    "Value"     : "enhanced"
+  },
+  {
+    "OptionName"  : "IamInstanceProfile",
+    "ResourceName": "AWSEBAutoScalingLaunchConfiguration",
+    "Namespace"   : "aws:autoscaling:launchconfiguration",
+    "Value"       : "aws-elasticbeanstalk-ec2-role"
+  },
+  {
+    "OptionName"  : "SecurityGroups",
+    "ResourceName": "AWSEBAutoScalingLaunchConfiguration",
+    "Namespace"   : "aws:autoscaling:launchconfiguration",
+    "Value"       : "default_elb_security_group"
+  },
+  {
+    "OptionName": "ServiceRole",
+    "Namespace" : "aws:elasticbeanstalk:environment",
+    "Value"     : "aws-elasticbeanstalk-service-role"
+  },
+  {
+    "OptionName"  : "SSHSourceRestriction",
+    "ResourceName": "AWSEBAutoScalingLaunchConfiguration",
+    "Namespace"   : "aws:autoscaling:launchconfiguration",
+    "Value"       : "tcp, 22, 22, bastion_host"
+  }
+]
