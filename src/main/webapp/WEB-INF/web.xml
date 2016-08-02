@@ -3,16 +3,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
-    <listener>
-        <listener-class>nl.ns.api.com.xebia.example.BootListener</listener-class>
-    </listener>
-
     <servlet>
-        <servlet-name>nl.ns.api.com.xebia.example.Application</servlet-name>
+        <servlet-name>com.xebia.example.Application</servlet-name>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>nl.ns.api.com.xebia.example.Application</servlet-name>
+        <servlet-name>com.xebia.example.Application</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
@@ -26,17 +22,6 @@
         <servlet-name>HystrixMetricsStreamServlet</servlet-name>
         <url-pattern>/hystrix.stream</url-pattern>
     </servlet-mapping>
-
-    <filter>
-        <display-name>HystrixRequestContextServletFilter</display-name>
-        <filter-name>HystrixRequestContextServletFilter</filter-name>
-        <filter-class>nl.ns.commonservice.hystrix.HystrixRequestContextServletFilter</filter-class>
-        <async-supported>true</async-supported>
-    </filter>
-    <filter-mapping>
-        <filter-name>HystrixRequestContextServletFilter</filter-name>
-        <url-pattern>/api/*</url-pattern>
-    </filter-mapping>
 
     <security-constraint>
         <web-resource-collection>

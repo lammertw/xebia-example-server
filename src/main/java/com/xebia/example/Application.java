@@ -1,4 +1,4 @@
-package nl.ns.api.com.xebia.example;
+package com.xebia.example;
 
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -11,8 +11,7 @@ import javax.ws.rs.ApplicationPath;
 public class Application extends ResourceConfig {
     public Application() {
         packages(
-                "nl.ns.commonservice",
-                "nl.ns.api.com.xebia.example",
+                "com.xebia.example",
                 "io.swagger.jaxrs.listing"
         );
 
